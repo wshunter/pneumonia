@@ -9,7 +9,7 @@ device = (
     if torch.backends.mps.is_available()
     else "cpu"
 )
-device = "cpu"
+#device = "cpu"
 print(f"Using {device} device")
 
 IM_SIZE=224
@@ -109,8 +109,8 @@ resize = torchvision.transforms.Resize((299,299))
 x_pred_t = resize(x_pred_t)
 x_gnd_t = resize(x_gnd_t)
 
-x_gnd_t = x_gnd_t.view(624,1,299,299)
-x_pred_t = x_pred_t.view(624,1,299,299)
+x_gnd_t = x_gnd_t.view(624,1,299,299).expand(624,3,299,299)
+x_pred_t = x_pred_t.view(624,1,299,299).expand(624,3,299,299)
 
 import ignite
 from ignite.metrics import FID, InceptionScore
@@ -125,7 +125,8 @@ fid_metric.attach(default_evaluator, "fid")
 is_metric.attach(default_evaluator, "is")
 
 state = default_evaluator.run([[x_pred_t, x_gnd_t]])
+print(state)
 
-plt.show()
+#plt.show()
 
 
